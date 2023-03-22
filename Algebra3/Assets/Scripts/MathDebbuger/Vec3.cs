@@ -143,14 +143,15 @@ namespace CustomMath
         public static Vec3 Cross(Vec3 a, Vec3 b)
         {
             throw new NotImplementedException();
+            //return ((a.y * b.z - a.z * b.y) - (a.x * b.z - a.z * b.x) + (a.x * b.y - a.y * b.x));
         }
         public static float Distance(Vec3 a, Vec3 b)
         {
-            throw new NotImplementedException();
+            return Mathf.Sqrt(Mathf.Pow((b.x - a.x), 2) + Mathf.Pow((b.y - a.y), 2));
         }
         public static float Dot(Vec3 a, Vec3 b)
         {
-            throw new NotImplementedException();
+            return ((a.x * b.x) + (a.y * b.y));
         }
         public static Vec3 Lerp(Vec3 a, Vec3 b, float t)
         {
