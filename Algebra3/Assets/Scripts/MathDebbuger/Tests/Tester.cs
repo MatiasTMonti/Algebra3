@@ -26,6 +26,7 @@ public class Tester : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.L))
         {
+           Debug.Log(Vec3.Distance(new Vec3(2, 2, 2), new Vec3(3, 3, 3)));
         }
 
         if (Input.GetKeyDown(KeyCode.O))
