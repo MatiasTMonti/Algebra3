@@ -136,9 +136,11 @@ namespace CustomMath
         {
             throw new NotImplementedException();
         }
+
+        /// v /→  =  √vx2 + vy2 + vz2.
         public static float Magnitude(Vec3 vector)
         {
-            throw new NotImplementedException();
+            return Mathf.Sqrt(Mathf.Pow(vector.x, 2) + Mathf.Pow(vector.y, 2) + Mathf.Pow(vector.z, 2));
         }
         public static Vec3 Cross(Vec3 a, Vec3 b)
         {
