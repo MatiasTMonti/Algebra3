@@ -170,9 +170,12 @@ namespace CustomMath
         {
             throw new NotImplementedException();
         }
+
+        //https://docs.unity3d.com/ScriptReference/Vector3-magnitude.html
+        //Si no entiendo mal es el mismo calculo que magnitud pero sin la raiz cuadrada
         public static float SqrMagnitude(Vec3 vector)
         {
-            throw new NotImplementedException();
+            return Mathf.Pow(vector.x, 2) + Mathf.Pow(vector.y, 2) + Mathf.Pow(vector.z, 2);
         }
         public static Vec3 Project(Vec3 vector, Vec3 onNormal) 
         {
