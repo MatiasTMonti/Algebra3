@@ -162,13 +162,18 @@ namespace CustomMath
         {
             return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z));
         }
+
+        //https://medium.com/swlh/youre-using-lerp-wrong-73579052a3c3#:~:text=The%20Lerp%20function%2C%20mathematically%2C%20is,simpler%20than%20the%20Vector3%20version.
         public static Vec3 Lerp(Vec3 a, Vec3 b, float t)
         {
-            throw new NotImplementedException();
+            t = Mathf.Clamp01(t); //Multiplica el valor siempre por 1, lo que hace que no vaya a mas del valor de final
+            return new Vec3(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
         }
+
+        //Lo mismo que el Lerp pero sin clampear el maximo
         public static Vec3 LerpUnclamped(Vec3 a, Vec3 b, float t)
         {
-            throw new NotImplementedException();
+            return new Vec3(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
         }
         public static Vec3 Max(Vec3 a, Vec3 b)
         {
