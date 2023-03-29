@@ -175,13 +175,17 @@ namespace CustomMath
         {
             return new Vec3(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
         }
+
+        //Gracias a la funcion mathf.max/min puedo determinar cual de los 2 valores es mas grande
+        //y gracias a esto hacer el conjunto de vector mas grande que se forme
+        //https://docs.unity3d.com/ScriptReference/Vector3.Max.html
         public static Vec3 Max(Vec3 a, Vec3 b)
         {
-            throw new NotImplementedException();
+            return new Vec3(Mathf.Max(a.x, b.x), Mathf.Max(a.y, b.y), Mathf.Max(a.z, b.z));
         }
         public static Vec3 Min(Vec3 a, Vec3 b)
         {
-            throw new NotImplementedException();
+            return new Vec3(Mathf.Min(a.x, b.x), Mathf.Min(a.y, b.y), Mathf.Min(a.z, b.z));
         }
 
         //https://docs.unity3d.com/ScriptReference/Vector3-magnitude.html
