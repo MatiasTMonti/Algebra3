@@ -6,6 +6,9 @@ namespace CustomMath
 {
     public struct Vec3 : IEquatable<Vec3>
     {
+        //Podria sacarlas todas de aca, pero no lo voy hacer
+        //https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Math/Vector3.cs
+
         #region Variables
         public float x;
         public float y;
@@ -132,12 +135,17 @@ namespace CustomMath
         {
             throw new NotImplementedException();
         }
+
+        //https://forum.unity.com/threads/what-exactly-is-clampmagnitude.336021/
+        //Lo camplea hasta la longitud deseada
         public static Vec3 ClampMagnitude(Vec3 vector, float maxLength)
         {
-            throw new NotImplementedException();
+            return new Vec3(vector / Magnitude(vector) * maxLength);
         }
 
-        /// v /→  =  √vx2 + vy2 + vz2.
+        // v /→  =  √vx2 + vy2 + vz2.
+        // Obtiene la distancia exacta entre 2 objetos
+        //https://forum.unity.com/threads/sqrmagnitude-or-magnitude.80443/
         public static float Magnitude(Vec3 vector)
         {
             return Mathf.Sqrt(Mathf.Pow(vector.x, 2) + Mathf.Pow(vector.y, 2) + Mathf.Pow(vector.z, 2));
@@ -172,7 +180,8 @@ namespace CustomMath
         }
 
         //https://docs.unity3d.com/ScriptReference/Vector3-magnitude.html
-        //Si no entiendo mal es el mismo calculo que magnitud pero sin la raiz cuadrada
+        //Para comprobar la distancia usar esta misma y elevar al cuadrado el resultado
+        //asi usas menos recursos
         public static float SqrMagnitude(Vec3 vector)
         {
             return Mathf.Pow(vector.x, 2) + Mathf.Pow(vector.y, 2) + Mathf.Pow(vector.z, 2);
