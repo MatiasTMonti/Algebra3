@@ -13,9 +13,11 @@ namespace CustomMath
         public float y;
         public float z;
 
-        public float sqrMagnitude { get { throw new NotImplementedException(); } }
-        public Vector3 normalized { get { throw new NotImplementedException(); } }
-        public float magnitude { get { throw new NotImplementedException(); } }
+        public float sqrMagnitude { get { return SqrMagnitude(new Vec3(x, y, z)); } }
+
+        //https://answers.unity.com/questions/1754484/what-is-the-difference-between-normalize-normalize.html
+        public Vector3 normalized { get { return Vector3.Normalize(this); } }
+        public float magnitude { get { return Magnitude(new Vec3(x, y, z)); } }
         #endregion
 
         #region constants
@@ -132,9 +134,20 @@ namespace CustomMath
         {
             return "X = " + x.ToString() + "   Y = " + y.ToString() + "   Z = " + z.ToString();
         }
+        //https://answers.unity.com/questions/317648/angle-between-two-vectors.html
+
+        /*
+        Se normalizan lo vectores para que sea 1.
+        Hace producto punto de los vectores normalizados.
+        Ambos vectores son de 1, por lo tanto el resultado es el coseno del angulo.
+        Clampeo para evitar errores, ya que acos acepta valores entre -1 y 1.
+        Acos calcula el coseno "inverso" en radianes.
+        El numero hardcodeado es 180f / PI, para convertir de radianes a grados.
+        Esto devuelve un valor entre 0 y 180, ya que 180 es el angulo mas grande posible entre 2 vectores
+        */
         public static float Angle(Vec3 from, Vec3 to)
         {
-            throw new NotImplementedException();
+            return Mathf.Acos(Mathf.Clamp(Vec3.Dot(new Vec3(from.normalized.x, from.normalized.y, from.normalized.z), new Vec3(to.normalized.x, to.normalized.y, to.normalized.z)), -1f, 1f)) * 57.29578f;
         }
 
         //https://forum.unity.com/threads/what-exactly-is-clampmagnitude.336021/
@@ -159,6 +172,7 @@ namespace CustomMath
         {
             return Mathf.Sqrt(Mathf.Pow((b.x - a.x), 2) + Mathf.Pow((b.y - a.y), 2) + Mathf.Pow((b.z - a.z), 2));
         }
+        //Al combinar 2 vectores me devuelve un escalar
         public static float Dot(Vec3 a, Vec3 b)
         {
             return ((a.x * b.x) + (a.y * b.y) + (a.z * b.z));
@@ -216,7 +230,10 @@ namespace CustomMath
         }
         public void Normalize()
         {
-            throw new NotImplementedException();
+            float mag = this.magnitude;
+            this.x /= mag;
+            this.y /= mag;
+            this.z /= mag;
         }
         #endregion
 
