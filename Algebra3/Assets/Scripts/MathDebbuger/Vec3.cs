@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+
 namespace CustomMath
 {
+    [System.Serializable]
     public struct Vec3 : IEquatable<Vec3>
     {
         //https://github.com/Unity-Technologies/UnityCsReference/blob/master/Runtime/Export/Math/Vector3.cs
@@ -16,7 +18,7 @@ namespace CustomMath
         public float sqrMagnitude { get { return SqrMagnitude(new Vec3(x, y, z)); } }
 
         //https://answers.unity.com/questions/1754484/what-is-the-difference-between-normalize-normalize.html
-        public Vector3 normalized { get { return Vector3.Normalize(this); } }
+        public Vec3 normalized { get { return new Vec3(x / Mathf.Sqrt(x * x + y * y + z * z), y / Mathf.Sqrt(x * x + y * y + z * z), z / Mathf.Sqrt(x * x + y * y + z * z)); } }
         public float magnitude { get { return Magnitude(new Vec3(x, y, z)); } }
         #endregion
 

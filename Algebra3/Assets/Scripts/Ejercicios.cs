@@ -17,7 +17,10 @@ public class Ejercicios : MonoBehaviour
 
     private void Start()
     {
-        
+        MathDebbuger.Vector3Debugger.AddVector(transform.position, transform.position + A, Color.black, "A");
+        MathDebbuger.Vector3Debugger.AddVector(transform.position, transform.position + B, Color.white, "B");
+        MathDebbuger.Vector3Debugger.AddVector(transform.position, transform.position + result, VectorColor, "result");
+        MathDebbuger.Vector3Debugger.EnableEditorView();
     }
 
     private void Update()
@@ -25,10 +28,13 @@ public class Ejercicios : MonoBehaviour
         switch (ejercicio)
         {
             case Ejercicio.Uno:
+                result = A + B;
                 break;
             case Ejercicio.Dos:
+                result = B - A;
                 break;
             case Ejercicio.Tres:
+                result = new Vec3(A.x * B.x, A.y * B.y, A.z * B.z);
                 break;
             case Ejercicio.Cuatro:
                 break;
@@ -47,5 +53,9 @@ public class Ejercicios : MonoBehaviour
             default:
                 break;
         }
+
+        MathDebbuger.Vector3Debugger.UpdatePosition("A", transform.position, A + transform.position);
+        MathDebbuger.Vector3Debugger.UpdatePosition("B", transform.position, B + transform.position);
+        MathDebbuger.Vector3Debugger.UpdatePosition("result", transform.position, result + transform.position);
     }
 }
