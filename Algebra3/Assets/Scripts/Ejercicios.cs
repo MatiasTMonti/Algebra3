@@ -43,14 +43,18 @@ public class Ejercicios : MonoBehaviour
                 result = Vec3.Lerp(A, B, Time.time % 1);
                 break;
             case Ejercicio.Seis:
+                result = Vec3.Max(A, B);
                 break;
             case Ejercicio.Siete:
+                result = Vec3.Project(A, B);
                 break;
             case Ejercicio.Ocho:
+                result = Vec3.Distance(A, B) * (A + B).normalized;
                 break;
             case Ejercicio.Nueve:
                 break;
             case Ejercicio.Diez:
+                result = Vec3.LerpUnclamped(B, A, Time.time);
                 break;
             default:
                 break;

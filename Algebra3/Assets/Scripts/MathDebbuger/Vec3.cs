@@ -212,13 +212,15 @@ namespace CustomMath
         {
             return Mathf.Pow(vector.x, 2) + Mathf.Pow(vector.y, 2) + Mathf.Pow(vector.z, 2);
         }
+        //primer argumento vector que se desea proyectar, segundo parametro vector sobre el cual se va a proyectar el primero
         public static Vec3 Project(Vec3 vector, Vec3 onNormal)
         {
-            throw new NotImplementedException();
+            return new Vec3(Dot(vector, onNormal) / onNormal.sqrMagnitude * onNormal);
         }
         //La innormal es el plano, la indirection es una flecha direccional que llega al plano, esto nos devuelve un vector de igual
         //magnitud pero con su direccion reflejada
         //Estamos proyectando dos veces para "atras", nos da el reflejo
+        //primer parametro, vector a reflejar, segundo parametro vector normal que respresenta donde se va a reflejar
         //https://docs.unity3d.com/ScriptReference/Vector3.Reflect.html
         public static Vec3 Reflect(Vec3 inDirection, Vec3 inNormal)
         {
