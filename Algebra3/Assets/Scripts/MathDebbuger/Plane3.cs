@@ -19,22 +19,22 @@ namespace CustomMath
         public float distance { get { return m_Distance; } set { m_Distance = value; } }
 
         //Hace que el plano mire a la direccion opuesta
-        public Plane3 flipped { get { return new Plane3(-m_Normal, -m_Distance); } }
+        //public Plane3 flipped { get { return new Plane3(-m_Normal, -m_Distance); } }
         #endregion
 
         #region Constructors
-        public Plane3(Vec3 inNormal, Vec3 inPoint)
-        {
+        //public Plane3(Vec3 inNormal, Vec3 inPoint)
+        //{
 
-        }
-        public Plane3(Vec3 inNormal, float d)
-        {
+        //}
+        //public Plane3(Vec3 inNormal, float d)
+        //{
 
-        }
-        public Plane3(Vec3 a, Vec3 b, Vec3 c)
-        {
+        //}
+        //public Plane3(Vec3 a, Vec3 b, Vec3 c)
+        //{
 
-        }
+        //}
         #endregion
 
         #region Functions
