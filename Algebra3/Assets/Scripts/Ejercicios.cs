@@ -37,8 +37,10 @@ public class Ejercicios : MonoBehaviour
                 result = new Vec3(A.x * B.x, A.y * B.y, A.z * B.z);
                 break;
             case Ejercicio.Cuatro:
+                result = -Vec3.Cross(A, B);
                 break;
             case Ejercicio.Cinco:
+                result = Vec3.Lerp(A, B, Time.time % 1);
                 break;
             case Ejercicio.Seis:
                 break;
