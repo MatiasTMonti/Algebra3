@@ -19,28 +19,28 @@ namespace CustomMath
         public float distance { get { return m_Distance; } set { m_Distance = value; } }
 
         //Hace que el plano mire a la direccion opuesta
-        //public Plane3 flipped { get { return new Plane3(-m_Normal, -m_Distance); } }
+        public Plane3 flipped { get { return new Plane3(-m_Normal, -m_Distance); } }
         #endregion
 
         #region Constructors
-        //public Plane3(Vec3 inNormal, Vec3 inPoint)
-        //{
-
-        //}
-        //public Plane3(Vec3 inNormal, float d)
-        //{
-
-        //}
-        //public Plane3(Vec3 a, Vec3 b, Vec3 c)
-        //{
-
-        //}
+        public Plane3(Vec3 inNormal, Vec3 inPoint)
+        {
+            throw new NotImplementedException();
+        }
+        public Plane3(Vec3 inNormal, float d)
+        {
+            throw new NotImplementedException();
+        }
+        public Plane3(Vec3 a, Vec3 b, Vec3 c)
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Functions
         public static Plane3 Translate(Plane3 plane, Vec3 translation)
         {
-            throw new NotImplementedException();
+            return new Plane3(plane.m_Normal, -plane.m_Normal * plane.m_Distance + translation);
         }
 
         public Vec3 ClosestPointOnPlane(Vec3 point)
