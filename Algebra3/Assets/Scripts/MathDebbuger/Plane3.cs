@@ -78,9 +78,12 @@ namespace CustomMath
             return new Plane3(normal, point);
         }
 
+        //Calcula el punto mas cercano a un plano desde el punto dado
         public Vec3 ClosestPointOnPlane(Vec3 point)
         {
-            throw new NotImplementedException();
+            float distanceToPoint = Vec3.Dot(m_Normal, point) + m_Distance;
+
+            return point - (m_Normal * distanceToPoint);
         }
 
         //Invierto la direccion del plano
