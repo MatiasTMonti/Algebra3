@@ -23,17 +23,39 @@ namespace CustomMath
         #endregion
 
         #region Constructors
+
+        //Calcula la distancia desde el origen al plano utilizando la ecuación del plano
         public Plane3(Vec3 inNormal, Vec3 inPoint)
         {
-            throw new NotImplementedException();
+            //Normalizo el vector para simplificar el calculo de distancia
+            m_Normal = inNormal.normalized;
+
+            //Utilizo para calcular el producto escalar entre el vector normal y el punto
+            m_Distance = -Vec3.Dot(m_Normal, inPoint);
         }
+
+        //Este constructor es útil cuando ya conoces el vector normal del plano y la distancia desde el origen al plano.
         public Plane3(Vec3 inNormal, float d)
         {
-            throw new NotImplementedException();
+            m_Normal = inNormal.normalized;
+
+            m_Distance = d;
         }
+
+        //Este constructor es util en caso de que tengas 3 puntos
+        //El vector normal y la distancia del plano se calculan automáticamente a partir de los puntos dados
         public Plane3(Vec3 a, Vec3 b, Vec3 c)
         {
-            throw new NotImplementedException();
+            //Primero obtengo los 2 vectores que se encuentran en el plano a partir de a b c
+            Vec3 v1 = b - a;
+            Vec3 v2 = c - a;
+
+            //Obtengo el vector normal del plano como el producto cruzado de los dos vectores anteriores
+            m_Normal = Vec3.Cross(v1, v2).normalized;
+
+            //Pbtengo el coeficiente de distancia del plano utilizando uno de los puntos y el vector normal
+            //El coeficiente de distancia se calcula como - Ax - By - Cz
+            m_Distance = -Vec3.Dot(m_Normal, a);
         }
         #endregion
 
