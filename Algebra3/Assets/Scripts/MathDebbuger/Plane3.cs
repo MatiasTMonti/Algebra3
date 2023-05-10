@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using TMPro;
 
 namespace CustomMath
 {
@@ -107,9 +108,18 @@ namespace CustomMath
                 return false;
         }
 
+        //Determina si 2 puntos estan del mismo lado del plano
         public bool SameSide(Vec3 inPt0, Vec3 inPt1)
         {
-            throw new NotImplementedException();
+            //Calculo la distancia del punto al plano
+            float distance0 = Vec3.Dot(m_Normal, inPt0) + m_Distance;
+            float distance1 = Vec3.Dot(m_Normal, inPt1) + m_Distance;
+
+            //Compruebo si el punto se encuentra del mismo lado del vector
+            if ((distance0 > 0 && distance1 > 0) || (distance0 <= 0 && distance1 <= 0))
+                return true;
+            else
+                return false;
         }
 
         //La misma funcionalidad que constructor de plane
