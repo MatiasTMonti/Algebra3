@@ -133,9 +133,13 @@ namespace CustomMath
             m_Distance = -Vec3.Dot(m_Normal, a);
         }
 
+        //Nos sirve para establecer el valor inicial o modificar la orientacion y posicion de un plano
         public void SetNormalAndPosition(Vec3 inNormal, Vec3 inPoint)
         {
-            throw new NotImplementedException();
+            m_Normal = inNormal.normalized;
+
+            //El signo negativo asegura que distance sea positivo cuando el punto este opuesto al vector
+            m_Distance = -Vec3.Dot(m_Normal, inPoint);
         }
 
         //Translada en plano en X direccion
