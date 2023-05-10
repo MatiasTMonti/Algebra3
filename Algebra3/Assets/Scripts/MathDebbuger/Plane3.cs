@@ -60,9 +60,21 @@ namespace CustomMath
         #endregion
 
         #region Functions
+
+        //Devuelve una copia del plano dado que se mueve en el espacio por el translation.
         public static Plane3 Translate(Plane3 plane, Vec3 translation)
         {
-            return new Plane3(plane.m_Normal, -plane.m_Normal * plane.m_Distance + translation);
+            //Obtengo el vector normal del plano
+            Vec3 normal = plane.normal;
+
+            //Obtengo la distancia del plano
+            float distance = plane.distance;
+
+            //Hace la traslacion del punto del plano
+            Vec3 point = -normal * distance + translation;
+
+            //Crea un nuevo objeto plane trasladado
+            return new Plane3(normal, point);
         }
 
         public Vec3 ClosestPointOnPlane(Vec3 point)
