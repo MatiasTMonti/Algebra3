@@ -90,9 +90,10 @@ namespace CustomMath
             m_Distance = -m_Distance;
         }
 
+        //Calcula la distancia de un punto hacia un plano
         public float GetDistanceToPoint(Vec3 point)
         {
-            throw new NotImplementedException();
+            return Vec3.Dot(m_Normal, point) + m_Distance;
         }
 
         //Nos permite saber si el punto esta del lado positivo del plano
