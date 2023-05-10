@@ -138,9 +138,10 @@ namespace CustomMath
             throw new NotImplementedException();
         }
 
+        //Translada en plano en X direccion
         public void Translate(Vec3 translation)
         {
-            throw new NotImplementedException();
+            m_Distance += Vector3.Dot(m_Normal, translation);
         }
         #endregion
     }
