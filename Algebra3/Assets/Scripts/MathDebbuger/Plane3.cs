@@ -50,10 +50,10 @@ namespace CustomMath
             Vec3 v1 = b - a;
             Vec3 v2 = c - a;
 
-            //Obtengo el vector normal del plano como el producto cruzado de los dos vectores anteriores
+            //Obtengo el vector normal del plano con el producto Cruz de los dos vectores anteriores
             m_Normal = Vec3.Cross(v1, v2).normalized;
 
-            //Pbtengo el coeficiente de distancia del plano utilizando uno de los puntos y el vector normal
+            //Obtengo el coeficiente de distancia del plano utilizando uno de los puntos y el vector normal
             //El coeficiente de distancia se calcula como - Ax - By - Cz
             m_Distance = -Vec3.Dot(m_Normal, a);
         }
@@ -102,9 +102,15 @@ namespace CustomMath
             throw new NotImplementedException();
         }
 
+        //La misma funcionalidad que constructor de plane
         public void Set3Point(Vec3 a, Vec3 b, Vec3 c)
         {
+            Vec3 v1 = b - a;
+            Vec3 v2 = c - a;
 
+            m_Normal = Vec3.Cross(v1, v2).normalized;
+
+            m_Distance = -Vec3.Dot(m_Normal, a);
         }
 
         public void SetNormalAndPosition(Vec3 inNormal, Vec3 inPoint)
