@@ -82,9 +82,11 @@ namespace CustomMath
             throw new NotImplementedException();
         }
 
+        //Invierto la direccion del plano
         public void Flip()
         {
-            throw new NotImplementedException();
+            m_Normal = -m_Normal;
+            m_Distance = -m_Distance;
         }
 
         public float GetDistanceToPoint(Vec3 point)
