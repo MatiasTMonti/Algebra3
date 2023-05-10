@@ -94,9 +94,17 @@ namespace CustomMath
             throw new NotImplementedException();
         }
 
+        //Nos permite saber si el punto esta del lado positivo del plano
         public bool GetSide(Vec3 point)
         {
-            throw new NotImplementedException();
+            //Calculo la distancia del punto al plano
+            float pointDistance = Vec3.Dot(m_Normal, point) + m_Distance;
+
+            //Compruebo si el punto se encuentra del mismo lado del vector
+            if (pointDistance > 0)
+                return true;
+            else
+                return false;
         }
 
         public bool SameSide(Vec3 inPt0, Vec3 inPt1)
