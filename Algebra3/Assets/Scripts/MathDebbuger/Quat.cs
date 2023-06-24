@@ -6,7 +6,7 @@ namespace CustomMath
 {
     public struct Quat
     {
-
+        #region variables
         public float x;
         public float y;
         public float z;
@@ -28,7 +28,9 @@ namespace CustomMath
             this.z = z;
             this.w = w;
         }
+        #endregion
 
+        #region Operators
         public static bool operator ==(Quat lhs, Quat rhs)
         {
             return lhs.x == rhs.x && lhs.w == rhs.w && lhs.z == rhs.z && lhs.w == rhs.w;
@@ -75,15 +77,15 @@ namespace CustomMath
             return new Quat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
         }
 
+        #endregion
+
         public Vec3 EulerAngles
         {
             
         }
 
-        public Quat Normalized
-        {
-
-        }
+        //Normaliza el quaternion
+        public Quat Normalized => Normalize(this);
 
         public static Quat Euler(float x, float y, float z)
         { 
@@ -118,7 +120,22 @@ namespace CustomMath
 
         public void Normalize()
         {
-            
+            //Saco la magnitud
+            float magnitude = Mathf.Sqrt(x * x + y * y + z * z + w * w);
+
+            //Compruebo que su magnitud sea mayor que 0
+            if (magnitude == 0)
+                return;
+
+            //Calculo el inverso de la magnitud
+            float invMagnitud = 1f / magnitude;
+
+
+            //Multiplico cada componente para normalizarlo
+            x *= invMagnitud;
+            y *= invMagnitud;
+            z *= invMagnitud;
+            w *= invMagnitud;
         }
 
         public static Quat Lerp(Quat a, Quat b, float t)
