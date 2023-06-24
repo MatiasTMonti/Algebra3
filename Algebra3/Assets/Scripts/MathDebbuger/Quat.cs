@@ -31,32 +31,48 @@ namespace CustomMath
 
         public static bool operator ==(Quat lhs, Quat rhs)
         {
-
+            return lhs.x == rhs.x && lhs.w == rhs.w && lhs.z == rhs.z && lhs.w == rhs.w;
         }
 
         public static bool operator !=(Quat lhs, Quat rhs)
         {
-
-        };
+            return !(lhs == rhs);
+        }
 
         public static Quat operator *(Quat lhs, Quat rhs)
         {
-            
+            float newX = lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y;
+            float newY = lhs.w * rhs.y - lhs.x * rhs.z + lhs.y * rhs.w + lhs.z * rhs.x;
+            float newZ = lhs.w * rhs.z + lhs.x * rhs.y - lhs.y * rhs.x + lhs.z * rhs.w;
+            float newW = lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z;
+
+            return new Quat(newX, newY, newZ, newW);
         }
 
+        //Este operador se utiliza para aplicar una rotación representada por el cuaternión a un punto/vector en el espacio tridimensional
         public static Vec3 operator *(Quat rotation, Vec3 point)
         {
-            
+            //Creo un nuevo quaternion agregando el componente W = 0, a partir de un vector3
+            Quat pointQuat = new Quat(point.x, point.y, point.z, 0);
+
+            //Hago la multiplicacion de quaterniones para aplicar la rotacion
+            Quat resultQuat = rotation * pointQuat;
+
+            //Retorno la multiplicacion del vector
+            return new Vec3(resultQuat.x, resultQuat.y, resultQuat.z);
         }
 
+        //Este operador permite convertir un objeto Quat a un objeto Quaternion de otro tipo o clase
+        //La palabra implicita nos dice que el compilador lo hara automaticamente sin necesidad de hacerlo nosotros
         public static implicit operator Quaternion(Quat quaternion)
         {
-            
+            return new Quaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
         }
 
+        //Es lo mismo pero de un objeto Quaternion a Quat
         public static implicit operator Quat(Quaternion quaternion)
         {
-            
+            return new Quat(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
         }
 
         public Vec3 EulerAngles
