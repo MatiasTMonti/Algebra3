@@ -14,14 +14,19 @@ namespace CustomMath
 
         public const float kEpsilon = 1E-06F;
 
+        //Crea un objeto y se inicializa en el 0 0 0 1, donde los 0 son la parte imaginaria y el 1 la real
         public static Quat Identity
         {
             get { return new Quat(0, 0, 0, 1); }
         }
 
+        //Seteo de variables
         public Quat(float x, float y, float z, float w)
         {
-            
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.w = w;
         }
 
         public static bool operator ==(Quat lhs, Quat rhs)
