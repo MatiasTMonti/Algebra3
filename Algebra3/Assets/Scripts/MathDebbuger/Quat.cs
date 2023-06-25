@@ -188,9 +188,28 @@ namespace CustomMath
 
         }
 
+
+        //Nos permite obtener la diferencia de orientacion en grados entre 2 quaterniones
         public static float Angle(Quat a, Quat b)
         {
+            //Normalizo los quaterniones
+            Quat normalizedA = a.Normalized;
+            Quat normalizedB = b.Normalized;
 
+            float dotProduct = Quat.Dot(normalizedA, normalizedB);
+
+            //Mantengo el valor del escalar entre -1 y 1
+            dotProduct = Mathf.Clamp(dotProduct, -1, 1);
+
+            //Calculo el angulo en radianes
+            //Me devuelve el arcoseno
+            //Me devuelve radianes
+            float angleRadians = Mathf.Acos(dotProduct);
+
+            //Lo convierto de radianes a grados;
+            float angleToDegrees = angleRadians * Mathf.Rad2Deg;
+
+            return angleToDegrees;
         }
 
         private static bool IsEqualUsingDot(float dot)
