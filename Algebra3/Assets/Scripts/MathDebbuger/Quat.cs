@@ -81,14 +81,14 @@ namespace CustomMath
 
         public Vec3 EulerAngles
         {
-            
+
         }
 
         //Normaliza el quaternion
         public Quat Normalized => Normalize(this);
 
         public static Quat Euler(float x, float y, float z)
-        { 
+        {
 
         }
 
@@ -99,23 +99,34 @@ namespace CustomMath
 
         private static Quat ToQuaternion(Vec3 vec3)
         {
-            
+
         }
 
         private static Vec3 ToEulerAngles(Quat quat)
         {
-            
+
         }
 
 
         public static Quat Inverse(Quat rotation)
         {
-            
+
         }
 
         public static Quat Normalize(Quat quat)
         {
-            
+            //Saco la magnitud
+            float magnitud = Mathf.Sqrt(quat.x * quat.x + quat.y * quat.y + quat.z * quat.z + quat.w * quat.w);
+
+            //Compruebo que su magnitud sea mayor que 0
+            if (magnitud == 0)
+                return quat;
+
+            //Calculo el inverso de la magnitud
+            float invMagnitud = 1f / magnitud;
+
+            //Multiplico cada componente para normalizarlo
+            return new Quat(quat.x * invMagnitud, quat.y * invMagnitud, quat.z * invMagnitud, quat.w * invMagnitud);
         }
 
         public void Normalize()
@@ -140,12 +151,30 @@ namespace CustomMath
 
         public static Quat Lerp(Quat a, Quat b, float t)
         {
-            
+            //Campleo t entre 0 y 1
+            t = Mathf.Clamp01(t);
+
+            //Utilizo LerpUnclamped ya que hace lo mismo con la diferencia de que clampea
+            return LerpUnclamped(a, b, t);
         }
 
+        //Permite realizar una interpolación lineal sin restricciones entre los cuaterniones a y b con un parámetro de interpolación t
         public static Quat LerpUnclamped(Quat a, Quat b, float t)
         {
-            
+            //Saco el inverso de t
+            //Reduce gradualmente la influencia de A a medida que T aumenta y la influencia de B se incrementa proporcionalmente
+            float invT = 1f - t;
+
+            Quat result = new Quat(
+                invT * a.x + t * b.x,
+                invT * a.y + t * b.y,
+                invT * a.z + t * b.z,
+                invT * a.w + t * b.w
+                );
+
+            result.Normalize();
+
+            return result;
         }
 
         public static Quat Slerp(Quat a, Quat b, float t)
@@ -156,57 +185,57 @@ namespace CustomMath
 
         public static Quat SlerpUnclamped(Quat a, Quat b, float t)
         {
-            
+
         }
 
         public static float Angle(Quat a, Quat b)
         {
-            
+
         }
 
         private static bool IsEqualUsingDot(float dot)
         {
-            
+
         }
 
         public static float Dot(Quat a, Quat b)
         {
-            
+
         }
 
         public static Quat AngleAxis(float angle, Vec3 axis)
         {
-            
+
         }
 
         public static Quat FromToRotation(Vec3 fromDirection, Vec3 toDirection)
         {
-            
+
         }
 
         public static Quat LookRotation(Vec3 forward, Vec3 upwards)
         {
-            
+
         }
 
         public static Quat LookRotation(Vec3 forward)
         {
-            
+
         }
 
         public static Quat RotateTowards(Quat from, Quat to, float maxDegreesDelta)
         {
-            
+
         }
 
         public override bool Equals(object other)
         {
-            
+
         }
 
         public bool Equals(Quat other)
         {
-            
+
         }
 
         public override int GetHashCode()
