@@ -198,9 +198,10 @@ namespace CustomMath
 
         }
 
+        //Nos devuelve el escalar
         public static float Dot(Quat a, Quat b)
         {
-
+            return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
         }
 
         public static Quat AngleAxis(float angle, Vec3 axis)
