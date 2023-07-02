@@ -437,9 +437,32 @@ namespace CustomMath
             return LookRotation(forward, Vec3.Up);
         }
 
+        //Nos sirve para rotar gradualmente un quaternion desde from hacia to, limitando la rotacion.
         public static Quat RotateTowards(Quat from, Quat to, float maxDegreesDelta)
         {
+            //Obtengo el angulo (en grados) entre los dos quaterniones
+            //Representa la cantidad necesaria de rotacion para ir del quaternion from al to
+            float angle = Quaternion.Angle(from, to);
 
+            //Si el angulo es 0, los quaterniones son iguales, por lo que no hay necesidad de rotacion
+            if (angle == 0f)
+                return from;
+
+            //Calculamos el maximo angulo permitido (en grados) para esta rotacion
+            //Basicamente para que no supere el maximo permitido
+            float maxAngle = Mathf.Max(maxDegreesDelta, angle);
+
+            //Calculamos el factor de interpolacion entre los quaterniones originales.
+            //Representa la cantidad de rotacion que aplico en funcion del angulo permitido.
+            float t = maxAngle / angle;
+
+            //Interpolamos linealmente entre los quaterniones originales utilizando el factor t
+            //Nos da un quaternion que representa una rotacion parcial hacia to
+            Quat result = Quat.SlerpUnclamped(from, to, t);
+
+            result.Normalize();
+
+            return result;
         }
 
         //La diferencia radica en que una de las dos nos permite comparar objetos de forma mas segura, teniendo en cuenta que es de tipo QUAT
