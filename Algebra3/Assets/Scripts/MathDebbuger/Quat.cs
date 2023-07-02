@@ -212,12 +212,18 @@ namespace CustomMath
             return angleToDegrees;
         }
 
+        //Compara 2 vectores o direcciones usando el producto escalar y determina si son aproximadamente iguales.
         private static bool IsEqualUsingDot(float dot)
         {
+            float dotThreshold = 0.9999f; // Valor de referencia para la igualdad
 
+            bool isEqual = dot >= dotThreshold; // Compara el producto escalar con el umbral
+
+            return isEqual;
         }
 
         //Nos devuelve el escalar
+        //El producto escalar es una operacion que nos devuelve un valor numero al multiplicar los componentes correspondientes de 2 vectores y sumarlos.
         public static float Dot(Quat a, Quat b)
         {
             return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
