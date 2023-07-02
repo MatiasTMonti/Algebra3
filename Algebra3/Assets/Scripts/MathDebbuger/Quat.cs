@@ -360,24 +360,81 @@ namespace CustomMath
             return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
         }
 
+        //Se utiliza para crear un quaternion que representa una rotacion alrededor de un eje en especifico
         public static Quat AngleAxis(float angle, Vec3 axis)
         {
+            //Conversion de angulo a radianes
+            float radianAngle = Mathf.Rad2Deg * angle;
 
+            //Calculo la mitad del angulo
+            float halfAngle = radianAngle * 0.5f;
+
+            float sinHalfAngle = Mathf.Sin(halfAngle);
+            float cosHalfAngle = Mathf.Cos(halfAngle);
+
+            Vec3 normalizedAxis = axis.normalized;
+
+            //Calculo los componentes del quaternion usando la formula euler
+            float x = normalizedAxis.x * sinHalfAngle;
+            float y = normalizedAxis.y * sinHalfAngle;
+            float z = normalizedAxis.z * sinHalfAngle;
+            float w = cosHalfAngle;
+
+            return new Quat(x, y, z, w);
         }
 
+        //Nos sirve para crear quaterniones que represetan la rotacion necesaria para orientar un objeto
         public static Quat FromToRotation(Vec3 fromDirection, Vec3 toDirection)
         {
+            //Normalizo los vectores
+            Vec3 normalizedFrom = fromDirection.normalized;
+            Vec3 normalizedTo = toDirection.normalized;
 
+            //Calculo el producto cruz, su resultado es un vectro perpendicular a ambos vectores de direccion
+            Vec3 cross = Vec3.Cross(normalizedFrom, normalizedTo);
+
+            //Calculo el producto punto, esto nos da una medida de cuanto se superponen los vectores de direccion
+            float dot = Vec3.Dot(normalizedFrom, normalizedTo);
+
+            //Calculo el factor de escala, esto es necesario para ajustar los componentes y que nos de una rotacion correcta
+            float scale = Mathf.Sqrt((normalizedFrom.magnitude * normalizedTo.magnitude) + dot);
+
+            //Calculo los componentes del quaternion
+            float x = cross.x / scale;
+            float y = cross.y / scale;
+            float z = cross.z / scale;
+            float w = scale;
+
+            return new Quat(x, y, z, w);
         }
 
+        //Nos sirve cuando querramos que un objeto apunte hacia una direccion y mantenga cierta orientancion
         public static Quat LookRotation(Vec3 forward, Vec3 upwards)
         {
+            //Calculo el vector de direccion restando upward por forward, despues lo normalizo
+            Vec3 dir = (upwards - forward).normalized;
 
+            //Calculo la rotacion usando producto cruz entre forward y direccion, nos da como resultado un vector perpendicular al plano
+            Vec3 rotAxis = Vec3.Cross(Vec3.Forward, dir);
+
+            //Calculo el producto punto entre forward y direccion, nos devuelve el coseno del angulo entre los 2 vectores
+            float dot = Vec3.Dot(Vec3.Forward, dir);
+
+            //Creo un nuevo quat y le asigno x y z de rotAxis, la w la saco del producto punto mas 1
+            Quat result;
+            result.x = rotAxis.x;
+            result.y = rotAxis.y;
+            result.z = rotAxis.z;
+            result.w = dot + 1;
+
+            return result.Normalized;
         }
-
+        
+        //La diferencia entre los 2 es que uno nos da mas flexibilidad a la hora de elegir la la direccion
+        //El otro asume que el eje vertical es el vector estandar de direccion hacia arriba
         public static Quat LookRotation(Vec3 forward)
         {
-
+            return LookRotation(forward, Vec3.Up);
         }
 
         public static Quat RotateTowards(Quat from, Quat to, float maxDegreesDelta)
