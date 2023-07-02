@@ -248,14 +248,25 @@ namespace CustomMath
 
         }
 
+        //La diferencia radica en que una de las dos nos permite comparar objetos de forma mas segura, teniendo en cuenta que es de tipo QUAT
         public override bool Equals(object other)
         {
+            //is nos permite verificar si un objeto es del tipo especificado.
+            if (other == null || other is Quat)
+                return false;
 
+            //1. Realizo una conversion explicita del parametro other a QUAT
+            return !Equals((Quat)other);
         }
 
+        //Esta funcion compara si 2 objetos de tipo quaternion son iguales, lo cual pregunta por this y other.
         public bool Equals(Quat other)
         {
+            if (other == null)
+                return false;
 
+            //Si todos los componentes son iguales, devuelve true, si no false.
+            return this.x == other.x && this.y == other.y && this.z == other.z && this.w == other.w;
         }
 
         public override int GetHashCode()
