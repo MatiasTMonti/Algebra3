@@ -279,13 +279,44 @@ namespace CustomMath
 
         public static Quat Slerp(Quat a, Quat b, float t)
         {
+            t = Mathf.Clamp01(t);
 
+            return SlerpUnclamped(a, b, t);
         }
-
 
         public static Quat SlerpUnclamped(Quat a, Quat b, float t)
         {
+            //Creo una instancia del quaternion
+            Quat r;
 
+            //Calculo el valor de time
+            float time = 1 - t;
+
+            float wa, wb;
+            
+            //Calculo el angulo entre los cuaterniones A y B
+            float angle = Mathf.Acos(Dot(a, b));
+
+            //Uso abs para obtener el valor absoluto(obtener el positivo)
+            angle = Mathf.Abs(angle);
+
+            //Calculo el valor del seno
+            float sn = Mathf.Sin(angle);
+
+            //Calculo los factores de interpolacion dividiendo el seno del angulo, osea los normalizo
+            wa = Mathf.Sin(time * angle) / sn;
+            wb = Mathf.Sin(t * angle) / sn;
+
+            //Realizo la interpolacion lineal usando wa y wb, los asignamos a r
+            r.x = wa * a.x + wb * b.x;
+            r.y = wa * a.y + wb * b.y;
+            r.z = wa * a.z + wb * b.z;
+            r.w = wa * a.w + wb * b.w;
+
+            //Normalizo r
+            r.Normalize();
+
+            return r;
         }
 
 
