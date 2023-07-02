@@ -201,10 +201,16 @@ namespace CustomMath
             return euler;
         }
 
-
+        //Se encarga de calcular y devolver el quaternion inverso
         public static Quat Inverse(Quat rotation)
         {
+            //Calculo el conjugado del quaternion
+            Quat conjugado = new Quat(-rotation.x, -rotation.y, -rotation.z, rotation.w);
 
+            //Lo normalizo para que la logitud no sea mayor a 1
+            Quat inverse = conjugado.Normalized;
+
+            return inverse;
         }
 
         public static Quat Normalize(Quat quat)
