@@ -93,14 +93,62 @@ namespace CustomMath
 
         #region Functions
 
+        //Nos sirve para crear un nuevo quaterion a partir de los angulos de euler. 
         public static Quat Euler(float x, float y, float z)
         {
+            //Convierte los angulos de grados a radianes (Necesario porque las funciones trig en C# esperan angulos en radianes)
+            float radianX = x * Mathf.Deg2Rad;
+            float radianY = y * Mathf.Deg2Rad;
+            float radianZ = z * Mathf.Deg2Rad;
 
+            //Calculo los valores trig de la mitad de los angulos utilizando la formula para la conversion de angulos euler a quaterniones.
+            float halfX = radianX * 0.5f;
+            float halfY = radianY * 0.5f;
+            float halfZ = radianZ * 0.5f;
+
+            //Saco el seno y coseno de los angulos euler
+            //El seno lo uso para los componentes imaginarios, relacionado con la magnitud y rotacion en torno a los ejes X Y Z.
+            //El coseno lo uso para el componente real(W), multiplicado representa la rotacion total, escalar.
+            float sinX = Mathf.Sin(halfX);
+            float cosX = Mathf.Cos(halfX);
+            float sinY = Mathf.Sin(halfY);
+            float cosY = Mathf.Cos(halfY);
+            float sinZ = Mathf.Sin(halfZ);
+            float cosZ = Mathf.Cos(halfZ);
+
+            // Calcula los componentes del cuaternion utilizando la fórmula de Euler para la conversión. (La foto definitva)
+            float qx = sinX * cosY * cosZ - cosX * sinY * sinZ;
+            float qy = cosX * sinY * cosZ + sinX * cosY * sinZ;
+            float qz = cosX * cosY * sinZ - sinX * sinY * cosZ;
+            float qw = cosX * cosY * cosZ + sinX * sinY * sinZ;
+
+            //Creo el quaternion a partir de estos componentes.
+            Quat quaternion = new Quat(qx, qy, qz, qw);
+
+            return quaternion;
         }
 
+        //Si bien ambas nos devuelven los mismo, la diferencia radica en los parametros que le pasamos.
+        //Ya que una nos pide los parametros por separados en grados y la otra como un objeto vec3.
         public static Quat Euler(Vec3 euler)
         {
+            float halfX = euler.x * 0.5f;
+            float halfY = euler.y * 0.5f;
+            float halfZ = euler.z * 0.5f;
 
+            float sinX = Mathf.Sin(halfX);
+            float cosX = Mathf.Cos(halfX);
+            float sinY = Mathf.Sin(halfY);
+            float cosY = Mathf.Cos(halfY);
+            float sinZ = Mathf.Sin(halfZ);
+            float cosZ = Mathf.Cos(halfZ);
+
+            float x = sinX * cosY * cosZ + cosX * sinY * sinZ;
+            float y = cosX * sinY * cosZ - sinX * cosY * sinZ;
+            float z = cosX * cosY * sinZ - sinX * sinY * cosZ;
+            float w = cosX * cosY * cosZ + sinX * sinY * sinZ;
+
+            return new Quat(x, y, z, w);
         }
 
         private static Quat ToQuaternion(Vec3 vec3)
