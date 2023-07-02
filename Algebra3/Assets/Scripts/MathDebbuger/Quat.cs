@@ -180,9 +180,25 @@ namespace CustomMath
             return quat;
         }
 
+        //Esta funcion convierte un cuaterion en angulos euler
         private static Vec3 ToEulerAngles(Quat quat)
         {
+            //Los paso a algo mas simple de leer
+            float qw = quat.w;
+            float qx = quat.x;
+            float qy = quat.y;
+            float qz = quat.z;
 
+            //Arcotangente y Arcoseno
+            //La formulas son usadas para convertir los componentes de un cuaternion en angulos euler
+            //Se basan en la representacion de cuaternion conocida como "Euler de navegacion"
+            float roll = Mathf.Atan2(2f * (qw * qx + qy * qz), 1f - 2f * (qx * qx + qy * qy)); //Angulo de rotacion alrededor del eje X
+            float pitch = Mathf.Asin(2f * (qw * qy - qz * qx));                                //Angulo de rotacion alrededor del eje Y
+            float yaw = Mathf.Atan2(2f * (qw * qz + qx * qy), 1f - 2f * (qy * qy + qz * qz));  //Angulo de rotacion alrededor del eje Z
+
+            Vec3 euler = new Vec3(roll, pitch, yaw);
+
+            return euler;
         }
 
 
