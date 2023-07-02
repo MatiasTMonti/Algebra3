@@ -153,7 +153,31 @@ namespace CustomMath
 
         private static Quat ToQuaternion(Vec3 vec3)
         {
+            /*
+            // Calcula los componentes del cuaternion a partir de los valores del objeto Vec3
+            float x = vec3.x;
+            float y = vec3.y;
+            float z = vec3.z;
+            float w = 0f; // El componente w se establece en 0, ya que no se proporciona en el objeto Vec3
 
+            return new Quat(x, y, z, w);
+            */
+
+            float cz = Mathf.Cos(Mathf.Deg2Rad * vec3.z / 2);
+            float sz = Mathf.Sin(Mathf.Deg2Rad * vec3.z / 2);
+            float cy = Mathf.Cos(Mathf.Deg2Rad * vec3.y / 2);
+            float sy = Mathf.Sin(Mathf.Deg2Rad * vec3.y / 2);
+            float cx = Mathf.Cos(Mathf.Deg2Rad * vec3.x / 2);
+            float sx = Mathf.Sin(Mathf.Deg2Rad * vec3.x / 2);
+
+            Quat quat = new Quat();
+
+            quat.w = cx * cy * cz + sx * sy * sz;
+            quat.x = sx * cy * cz - cx * sy * sz;
+            quat.y = cx * sy * cz + sx * cy * sz;
+            quat.z = cx * cy * sz - sx * sy * cz;
+
+            return quat;
         }
 
         private static Vec3 ToEulerAngles(Quat quat)
