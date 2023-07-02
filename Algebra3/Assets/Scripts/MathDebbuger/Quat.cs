@@ -79,13 +79,19 @@ namespace CustomMath
 
         #endregion
 
+        #region Properties
         public Vec3 EulerAngles
         {
-
+            get { return ToEulerAngles(this) * Mathf.Rad2Deg; } //Devuelve un vec3 que representa los angulos Euler de un quaternion y luego los paso de radianes a angulos
+            set { this = ToQuaternion(value * Mathf.Deg2Rad); } //Seteo el valor de del quaternion de vec3 y lo paso de grados a radianes
         }
 
         //Normaliza el quaternion
         public Quat Normalized => Normalize(this);
+
+        #endregion
+
+        #region Functions
 
         public static Quat Euler(float x, float y, float z)
         {
@@ -279,5 +285,7 @@ namespace CustomMath
         {
             return x.GetHashCode() ^ (y.GetHashCode() << 2) ^ (z.GetHashCode() >> 2) ^ (w.GetHashCode() >> 1);
         }
+
+        #endregion
     }
 }
