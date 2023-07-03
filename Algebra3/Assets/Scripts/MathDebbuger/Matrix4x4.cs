@@ -309,12 +309,22 @@ namespace CustomMath
         #endregion
 
         #region Functions
+
+        //Retorna el valor de una columna en especifico
         public Vector4 GetColumn(int number)
         {
-            
+            //Compruebo que este dentro del rango de columnas
+            if (number < 0 || number >= 4)
+            {
+                throw new IndexOutOfRangeException("Invalid column number!");
+            }
+
+            //Creo un nuevo vector usando los index correspondientes
+            //Los numeros X, hacen referencia al desplasamiento de cada posicion
+            //Por ejemplo para number = 0 + X (m00, m01, m02, m03)
+            //                 number = 1 + X (m10, m11, m12, m13)
+            return new Vector4(this[number], this[number + 4], this[number + 8], this[number + 12]);
         }
-
-
 
         public static Matrix4x4 Rotate(Quat q)
         {
@@ -330,7 +340,6 @@ namespace CustomMath
         {
             
         }
-
 
         public static Matrix4x4 TRS(Vec3 translation, Quat rotation, Vec3 scale)
         {
