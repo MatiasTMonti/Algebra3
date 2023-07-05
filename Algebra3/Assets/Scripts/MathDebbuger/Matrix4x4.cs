@@ -1,12 +1,20 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace CustomMath
 {
     public struct Matrix4x4
     {
+        // memory layout:
+        //
+        //                row no (=vertical)
+        //               |  0   1   2   3
+        //            ---+----------------
+        //            0  | m00 m10 m20 m30
+        // column no  1  | m01 m11 m21 m31
+        // (=horiz)   2  | m02 m12 m22 m32
+        //            3  | m03 m13 m23 m33
+
         #region Variables
         public float m00;
         public float m10;
@@ -48,9 +56,11 @@ namespace CustomMath
 
         public Quat rotation => GetRotation();
 
+        //Determina el quaternion de rotacion a partir de una matriz de transformacion.
         private Quat GetRotation()
         {
             //Se calcula la suma de estos 3 componentes (X Y Z diagonales)
+            //Esta nos va a determinar el tipo de rotacion
             float trace = m00 + m11 + m22;
             float w, x, y, z;
 
@@ -58,6 +68,7 @@ namespace CustomMath
             if (trace > 0)
             {
                 //s = valor inverso multiplicativo de 2 * Raiz cuadrada del real + X Y Z
+                //En este caso se divide ya que es para normalizar los componentes del quaternion de rotacion.
                 float s = 0.5f / Mathf.Sqrt(trace + 1);
 
                 //Calculo los componentes del cuaternion de rotacion
@@ -92,6 +103,73 @@ namespace CustomMath
             }
 
             return new Quaternion(x, y, z, w);
+        }
+
+        public bool isIdentity => IsIdentity();
+
+        //Se utiliza para saber si el valor es igual al de identidad, para eso usas approximately
+        private bool IsIdentity()
+        {
+            //Verificar si los elementos de la matriz son iguales a la matriz identidad
+            return Mathf.Approximately(m00, 1f) && Mathf.Approximately(m01, 0f) && Mathf.Approximately(m02, 0f) && Mathf.Approximately(m03, 0f) &&
+                   Mathf.Approximately(m10, 0f) && Mathf.Approximately(m11, 1f) && Mathf.Approximately(m12, 0f) && Mathf.Approximately(m13, 0f) &&
+                   Mathf.Approximately(m20, 0f) && Mathf.Approximately(m21, 0f) && Mathf.Approximately(m22, 1f) && Mathf.Approximately(m23, 0f) &&
+                   Mathf.Approximately(m30, 0f) && Mathf.Approximately(m31, 0f) && Mathf.Approximately(m32, 0f) && Mathf.Approximately(m33, 1f);
+        }
+
+        public float determinant => GetDeterminant();
+
+        private float GetDeterminant()
+        {
+            // Calcular el determinante de la matriz utilizando la regla de Sarrus
+            //La regla de Sarrus es una tecnica utilizada para calcular el determinante de una matriz
+            //El determintante dentro de una matriz3x3 es un valor que nos permite determinar props
+            //Eje, si es invertible o no
+            float det = m00 * (m11 * m22 - m12 * m21) - m01 * (m10 * m22 - m12 * m20) + m02 * (m10 * m21 - m11 * m20);
+            return det;
+        }
+
+        public Matrix4x4 inverse => Inverse();
+
+        public Matrix4x4 Inverse()
+        {
+            Matrix4x4 result = new Matrix4x4();
+
+            float determinant = GetDeterminant();
+
+            //Comprobar si la matriz es singular (determinante igual a cero)
+            if (Mathf.Approximately(determinant, 0f))
+            {
+                throw new InvalidOperationException("Cannot invert a singular matrix.");
+            }
+
+            float invDet = 1f / determinant;
+
+            //Calcular la inversa de la matriz
+            //El calculo que se usa se llama formula de la matriz adjunta o formula de cramer.
+            //Que establece que el elemento (i, j) de la matriz inversa es igual al cofactor del elemento
+            //(j, i) de la matriz original dividido por el determinante de la matriz original.
+            result.m00 = (m11 * m22 * m33 - m11 * m23 * m32 - m21 * m12 * m33 + m21 * m13 * m32 + m31 * m12 * m23 - m31 * m13 * m22) * invDet;
+            result.m01 = (-m01 * m22 * m33 + m01 * m23 * m32 + m21 * m02 * m33 - m21 * m03 * m32 - m31 * m02 * m23 + m31 * m03 * m22) * invDet;
+            result.m02 = (m01 * m12 * m33 - m01 * m13 * m32 - m11 * m02 * m33 + m11 * m03 * m32 + m31 * m02 * m13 - m31 * m03 * m12) * invDet;
+            result.m03 = (-m01 * m12 * m23 + m01 * m13 * m22 + m11 * m02 * m23 - m11 * m03 * m22 - m21 * m02 * m13 + m21 * m03 * m12) * invDet;
+
+            result.m10 = (-m10 * m22 * m33 + m10 * m23 * m32 + m20 * m12 * m33 - m20 * m13 * m32 - m30 * m12 * m23 + m30 * m13 * m22) * invDet;
+            result.m11 = (m00 * m22 * m33 - m00 * m23 * m32 - m20 * m02 * m33 + m20 * m03 * m32 + m30 * m02 * m23 - m30 * m03 * m22) * invDet;
+            result.m12 = (-m00 * m12 * m33 + m00 * m13 * m32 + m10 * m02 * m33 - m10 * m03 * m32 - m30 * m02 * m13 + m30 * m03 * m12) * invDet;
+            result.m13 = (m00 * m12 * m23 - m00 * m13 * m22 - m10 * m02 * m23 + m10 * m03 * m22 + m20 * m02 * m13 - m20 * m03 * m12) * invDet;
+
+            result.m20 = (m10 * m21 * m33 - m10 * m23 * m31 - m20 * m11 * m33 + m20 * m13 * m31 + m30 * m11 * m23 - m30 * m13 * m21) * invDet;
+            result.m21 = (-m00 * m21 * m33 + m00 * m23 * m31 + m20 * m01 * m33 - m20 * m03 * m31 - m30 * m01 * m23 + m30 * m03 * m21) * invDet;
+            result.m22 = (m00 * m11 * m33 - m00 * m13 * m31 - m10 * m01 * m33 + m10 * m03 * m31 + m30 * m01 * m13 - m30 * m03 * m11) * invDet;
+            result.m23 = (-m00 * m11 * m23 + m00 * m13 * m21 + m10 * m01 * m23 - m10 * m03 * m21 - m20 * m01 * m13 + m20 * m03 * m11) * invDet;
+
+            result.m30 = (-m10 * m21 * m32 + m10 * m22 * m31 + m20 * m11 * m32 - m20 * m12 * m31 - m30 * m11 * m22 + m30 * m12 * m21) * invDet;
+            result.m31 = (m00 * m21 * m32 - m00 * m22 * m31 - m20 * m01 * m32 + m20 * m02 * m31 + m30 * m01 * m22 - m30 * m02 * m21) * invDet;
+            result.m32 = (-m00 * m11 * m32 + m00 * m12 * m31 + m10 * m01 * m32 - m10 * m02 * m31 - m30 * m01 * m12 + m30 * m02 * m11) * invDet;
+            result.m33 = (m00 * m11 * m22 - m00 * m12 * m21 - m10 * m01 * m22 + m10 * m02 * m21 + m20 * m01 * m12 - m20 * m02 * m11) * invDet;
+
+            return result;
         }
 
         //Indexador nos permite acceder como si fuera un array
@@ -310,6 +388,11 @@ namespace CustomMath
 
         #region Functions
 
+        public Vector3 GetPosition()
+        {
+            return new Vector3(m03, m13, m23);
+        }
+
         //Retorna el valor de una columna en especifico
         public Vector4 GetColumn(int number)
         {
@@ -324,6 +407,77 @@ namespace CustomMath
             //Por ejemplo para number = 0 + X (m00, m01, m02, m03)
             //                 number = 1 + X (m10, m11, m12, m13)
             return new Vector4(this[number], this[number + 4], this[number + 8], this[number + 12]);
+        }
+
+        //Setea el valor de las columnas
+        public static void SetColumn(ref Matrix4x4 matrix, int index, Vector4 column)
+        {
+            matrix[0, index] = column.x;
+            matrix[1, index] = column.y;
+            matrix[2, index] = column.z;
+            matrix[3, index] = column.w;
+        }
+
+        //Retorna el valor de una fila en especifico
+        public Vector4 GetRow(int number)
+        {
+            //Compruebo que este dentro del rango de filas
+            if (number < 0 || number >= 4)
+            {
+                throw new IndexOutOfRangeException("Invalid column number!");
+            }
+
+            //Creo un nuevo vector usando los index correspondientes
+            //Los numeros X, hacen referencia al desplasamiento de cada posicion
+            return new Vector4(this[number], this[number + 4], this[number + 8], this[number + 12]);
+        }
+
+        //Setea el valor de las filas
+        public static void SetRow(ref Matrix4x4 matrix, int index, Vector4 row)
+        {
+            matrix[index, 0] = row.x;
+            matrix[index, 1] = row.y;
+            matrix[index, 2] = row.z;
+            matrix[index, 3] = row.w;
+        }
+
+        //Sirve para transformar un punto en el espacio tridimensional utilizando una matriz de transformacion
+        public Vector3 MultiplyPoint(Vector3 point)
+        {
+            //Se representa en un punto de un plano tridimensional
+            //El resultado de esto es un nuevo vector4 que contiene el punto transformado en coordenadas homogeneas
+            Vector4 transformedPoint = this * new Vector4(point.x, point.y, point.z, 1f);
+
+            //Para almacenar las coordenadas del punto transformado se divide cada componente por W.
+            //Esto normaliza las coordenadas
+            return new Vector3(transformedPoint.x / transformedPoint.w, transformedPoint.y / transformedPoint.w, transformedPoint.z / transformedPoint.w);
+        }
+
+        //Se usa para aplicar una transformacion 3D a un punto de espacio tridimensional utilizando matriz3x4
+        public Vector3 MultiplyPoint3x4(Vector3 point)
+        {
+            Vector3 transformedPoint = new Vector3(
+                m00 * point.x + m01 * point.y + m02 * point.z + m03,
+                m10 * point.x + m11 * point.y + m12 * point.z + m13,
+                m20 * point.x + m21 * point.y + m22 * point.z + m23
+            );
+
+            return transformedPoint;
+        }
+
+        //Se utiliza para aplicar transformacion lineales a vectores en un espacio tridimensional
+        //La diferencia entre las 2 es que la primera una se utiliza para transformar un punto en el espacio,
+        //teniendo en cuenta la traslacion y el otro cuando se desea transformar un vector direccion sin tener en
+        //cuenta la traslacion
+        public Vector3 MultiplyVector(Vector3 vector)
+        {
+            Vector3 transformedVector = new Vector3(
+                m00 * vector.x + m01 * vector.y + m02 * vector.z,
+                m10 * vector.x + m11 * vector.y + m12 * vector.z,
+                m20 * vector.x + m21 * vector.y + m22 * vector.z
+            );
+
+            return transformedVector;
         }
 
         public static Matrix4x4 Rotate(Quat q)
@@ -408,6 +562,45 @@ namespace CustomMath
             Matrix4x4 s = Matrix4x4.Scale(scale);
 
             return t * r * s;
+        }
+
+        public static Matrix4x4 SetTRS(Vector3 pos, Quaternion q, Vector3 s)
+        {
+            Matrix4x4 result = Matrix4x4.Translate(new Vec3(pos.x, pos.y, pos.z)) * Matrix4x4.Rotate(q) * Matrix4x4.Scale(new Vec3(s.x, s.y, s.z));
+            return result;
+        }
+
+        public bool ValidTRS()
+        {
+            // Comprobación de validez de la matriz TRS (Translation-Rotation-Scale)
+
+            // Comprobar que la matriz es una matriz de transformación (última fila igual a (0, 0, 0, 1))
+            if (m03 != 0f || m13 != 0f || m23 != 0f || m33 != 1f)
+            {
+                return false;
+            }
+
+            // Comprobar que la parte de rotación sea una matriz de rotación válida (ortogonal con determinante 1)
+            Matrix4x4 rotationMatrix = new Matrix4x4(
+                m00, m01, m02, 0f,
+                m10, m11, m12, 0f,
+                m20, m21, m22, 0f,
+                0f, 0f, 0f, 1f
+            );
+
+            float rotationDeterminant = rotationMatrix.GetDeterminant();
+            if (!Mathf.Approximately(rotationDeterminant, 1f))
+            {
+                return false;
+            }
+
+            // Comprobar que la parte de escala no contenga valores negativos
+            if (m00 < 0f || m11 < 0f || m22 < 0f)
+            {
+                return false;
+            }
+
+            return true;
         }
         #endregion
     }
