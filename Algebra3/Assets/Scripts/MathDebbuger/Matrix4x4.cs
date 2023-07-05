@@ -331,9 +331,19 @@ namespace CustomMath
             
         }
 
+        //Esta funcion se utiliza para crear una matriz de escala
         public static Matrix4x4 Scale(Vec3 vector)
         {
-            
+            //Se crea una instancia de matriz
+            Matrix4x4 result = new Matrix4x4();
+
+            //Se asignan a los componentes X Y Z respecivamente, ya que cada uno representa una escala
+            result.m00 = vector.x;
+            result.m11 = vector.y;
+            result.m22 = vector.z;
+            result.m33 = 1f; //Se le asigna 1 ya que no hay cambio en su escala
+
+            return result;
         }
 
         public static Matrix4x4 Translate(Vec3 vector)
