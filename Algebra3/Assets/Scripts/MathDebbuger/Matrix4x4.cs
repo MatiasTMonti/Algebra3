@@ -328,7 +328,45 @@ namespace CustomMath
 
         public static Matrix4x4 Rotate(Quat q)
         {
-            
+            //Creo una matriz sin ningun tipo de transformacion
+            Matrix4x4 result = Matrix4x4.Identity;
+
+            //Extraigo todos los componentes de Q para facilicitar el uso
+            float qx = q.x;
+            float qy = q.y;
+            float qz = q.z;
+            float qw = q.w;
+
+            //Calculo las diversas combinaciones.
+            //Cuadrado.
+            float qx2 = qx * qx;
+            float qy2 = qy * qy;
+            float qz2 = qz * qz;
+
+            float qxqy = qx * qy;
+            float qxqz = qx * qz;
+            float qxqw = qx * qw;
+
+            float qyqz = qy * qz;
+            float qyqw = qy * qw;
+
+            float qzqw = qz * qw;
+
+            //Mutltiplicacion para permitir la rotacion.
+            result.m00 = 1f - 2f * (qy2 + qz2);
+            result.m01 = 2f * (qxqy - qzqw);
+            result.m02 = 2f * (qxqz + qyqw);
+
+            result.m10 = 2f * (qxqy + qzqw);
+            result.m11 = 1f - 2f * (qx2 + qz2);
+            result.m12 = 2f * (qyqz - qxqw);
+
+            result.m20 = 2f * (qxqz - qyqw);
+            result.m21 = 2f * (qyqz + qxqw);
+            result.m22 = 1f - 2f * (qx2 + qy2);
+
+            return result;
+
         }
 
         //Esta funcion se utiliza para crear una matriz de escala
@@ -360,9 +398,16 @@ namespace CustomMath
             return result;
         }
 
+        //Esto nos permite tener las transformaciones de la matriz completa.
+        //Llama a las funciones translate rotate y scale y las multiplica.
+        //Asi sabemos como se representa el objeto sobre el plano.
         public static Matrix4x4 TRS(Vec3 translation, Quat rotation, Vec3 scale)
         {
-            
+            Matrix4x4 t = Matrix4x4.Translate(translation);
+            Matrix4x4 r = Matrix4x4.Rotate(rotation);
+            Matrix4x4 s = Matrix4x4.Scale(scale);
+
+            return t * r * s;
         }
         #endregion
     }
