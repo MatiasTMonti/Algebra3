@@ -346,9 +346,18 @@ namespace CustomMath
             return result;
         }
 
+        //Nos permite mover puntos o vectores de un espacio tridimensional mediante la traslacion
         public static Matrix4x4 Translate(Vec3 vector)
         {
-            
+            Matrix4x4 result = new Matrix4x4();
+
+            //Representan el X Y Z en la traslacion de un objeto.
+            result.m03 = vector.x;
+            result.m13 = vector.y;
+            result.m23 = vector.z;
+            result.m33 = 1f; //Se queda en 1 porque no hay ningun cambio.
+
+            return result;
         }
 
         public static Matrix4x4 TRS(Vec3 translation, Quat rotation, Vec3 scale)
