@@ -8,6 +8,7 @@ namespace CustomMath
         // memory layout:
         //
         //                row no (=vertical)
+        //                  x   y   z   w
         //               |  0   1   2   3
         //            ---+----------------
         //            0  | m00 m10 m20 m30
@@ -35,7 +36,7 @@ namespace CustomMath
         public float m13;
         public float m23;
         public float m33;
-        
+
         //Inicializo una matriz en 0
         private static readonly Matrix4x4 Zero = new Matrix4x4(new Vector4(0, 0, 0, 0), new Vector4(0, 0, 0, 0), new Vector4(0, 0, 0, 0), new Vector4(0, 0, 0, 0));
 
@@ -65,7 +66,7 @@ namespace CustomMath
             float w, x, y, z;
 
             //Rotacion general
-            if (trace > 0)
+            if (trace > 0) //Si es mayor que 0, Significa que no es una matriz de identidad
             {
                 //s = valor inverso multiplicativo de 2 * Raiz cuadrada del real + X Y Z
                 //En este caso se divide ya que es para normalizar los componentes del quaternion de rotacion.
@@ -77,7 +78,7 @@ namespace CustomMath
                 y = (m02 - m20) * s;
                 z = (m10 - m01) * s;
             }
-            else if (m00 > m11 && m00 > m22) //Se hace para saber que componente de la matriz tiene el valor mas alto
+            else if (m00 > m11 && m00 > m22) //Se para identificar el principal eje de rotacion
             {
                 float s = 2 * Mathf.Sqrt(1 + m00 - m11 - m22);
                 w = (m21 - m12) / s;
@@ -121,16 +122,20 @@ namespace CustomMath
 
         private float GetDeterminant()
         {
-            // Calcular el determinante de la matriz utilizando la regla de Sarrus
+            //Calcular el determinante de la matriz utilizando la regla de Sarrus
             //La regla de Sarrus es una tecnica utilizada para calcular el determinante de una matriz
             //El determintante dentro de una matriz3x3 es un valor que nos permite determinar props
             //Eje, si es invertible o no
             float det = m00 * (m11 * m22 - m12 * m21) - m01 * (m10 * m22 - m12 * m20) + m02 * (m10 * m21 - m11 * m20);
             return det;
+            //det = 0 singular = no tiene inversa
+            //det > 0 no singular = tiene inversa
+            //det < 0 no singular = tiene inversa
         }
 
         public Matrix4x4 inverse => Inverse();
 
+        //Es una matriz que multiplicada por le original nos devuelve una matriz de identidad.
         public Matrix4x4 Inverse()
         {
             Matrix4x4 result = new Matrix4x4();
@@ -138,11 +143,13 @@ namespace CustomMath
             float determinant = GetDeterminant();
 
             //Comprobar si la matriz es singular (determinante igual a cero)
+            //Esto porque la matriz singular no tiene inversa
             if (Mathf.Approximately(determinant, 0f))
             {
                 throw new InvalidOperationException("Cannot invert a singular matrix.");
             }
 
+            //Inverso multiplicativo del determinante
             float invDet = 1f / determinant;
 
             //Calcular la inversa de la matriz
@@ -390,6 +397,7 @@ namespace CustomMath
 
         public Vector3 GetPosition()
         {
+            //Corresponden a los elementos de la cuarta columna, que representan las coordenadas de traslacion x y z
             return new Vector3(m03, m13, m23);
         }
 
@@ -442,18 +450,22 @@ namespace CustomMath
         }
 
         //Sirve para transformar un punto en el espacio tridimensional utilizando una matriz de transformacion
+        //Considera traslacion, rotacion y escala
         public Vector3 MultiplyPoint(Vector3 point)
         {
-            //Se representa en un punto de un plano tridimensional
-            //El resultado de esto es un nuevo vector4 que contiene el punto transformado en coordenadas homogeneas
-            Vector4 transformedPoint = this * new Vector4(point.x, point.y, point.z, 1f);
+            //Multiplicacion matricial entre matrix4x4 y un vector punto
+            //m00 * point.x + m01 * point.y + m02 * point.z + m03 = X
+            Vector3 transformedPoint = new Vector3(
+                m00 * point.x + m01 * point.y + m02 * point.z + m03,
+                m10 * point.x + m11 * point.y + m12 * point.z + m13,
+                m20 * point.x + m21 * point.y + m22 * point.z + m23
+            );
 
-            //Para almacenar las coordenadas del punto transformado se divide cada componente por W.
-            //Esto normaliza las coordenadas
-            return new Vector3(transformedPoint.x / transformedPoint.w, transformedPoint.y / transformedPoint.w, transformedPoint.z / transformedPoint.w);
+            return transformedPoint;
         }
 
-        //Se usa para aplicar una transformacion 3D a un punto de espacio tridimensional utilizando matriz3x4
+        //Se usa para aplicar una transformacion 3D a un punto de espacio tridimensional utilizando matrix3x4
+        //Considera traslacion y rotacion
         public Vector3 MultiplyPoint3x4(Vector3 point)
         {
             Vector3 transformedPoint = new Vector3(
@@ -466,9 +478,7 @@ namespace CustomMath
         }
 
         //Se utiliza para aplicar transformacion lineales a vectores en un espacio tridimensional
-        //La diferencia entre las 2 es que la primera una se utiliza para transformar un punto en el espacio,
-        //teniendo en cuenta la traslacion y el otro cuando se desea transformar un vector direccion sin tener en
-        //cuenta la traslacion
+        //Considera rotacion y escala
         public Vector3 MultiplyVector(Vector3 vector)
         {
             Vector3 transformedVector = new Vector3(
@@ -507,6 +517,10 @@ namespace CustomMath
             float qzqw = qz * qw;
 
             //Mutltiplicacion para permitir la rotacion.
+            //? 2a2?1+2b2 2bc?2ad 2bd+2ac |
+            //? 2bc+2ad 2a2?1+2c2 2cd?2ab |
+            //? 2bd?2ac 2cd+2ab 2a2?1+2d2 |
+            //Formula de conversion de cuaternion a matriz de rotacion
             result.m00 = 1f - 2f * (qy2 + qz2);
             result.m01 = 2f * (qxqy - qzqw);
             result.m02 = 2f * (qxqz + qyqw);
@@ -555,7 +569,7 @@ namespace CustomMath
         //Esto nos permite tener las transformaciones de la matriz completa.
         //Llama a las funciones translate rotate y scale y las multiplica.
         //Asi sabemos como se representa el objeto sobre el plano.
-        public static Matrix4x4 TRS(Vec3 translation, Quat rotation, Vec3 scale)
+        public static Matrix4x4 SetTRS(Vec3 translation, Quat rotation, Vec3 scale)
         {
             Matrix4x4 t = Matrix4x4.Translate(translation);
             Matrix4x4 r = Matrix4x4.Rotate(rotation);
@@ -564,38 +578,18 @@ namespace CustomMath
             return t * r * s;
         }
 
-        public static Matrix4x4 SetTRS(Vector3 pos, Quaternion q, Vector3 s)
-        {
-            Matrix4x4 result = Matrix4x4.Translate(new Vec3(pos.x, pos.y, pos.z)) * Matrix4x4.Rotate(q) * Matrix4x4.Scale(new Vec3(s.x, s.y, s.z));
-            return result;
-        }
-
         public bool ValidTRS()
         {
-            // Comprobación de validez de la matriz TRS (Translation-Rotation-Scale)
-
-            // Comprobar que la matriz es una matriz de transformación (última fila igual a (0, 0, 0, 1))
-            if (m03 != 0f || m13 != 0f || m23 != 0f || m33 != 1f)
+            // Verificar que la magnitud del quaternion de rotación sea aproximadamente igual a 1
+            Quat normalizedRotation = Quat.Normalize(rotation);
+            if (normalizedRotation != rotation)
             {
                 return false;
             }
 
-            // Comprobar que la parte de rotación sea una matriz de rotación válida (ortogonal con determinante 1)
-            Matrix4x4 rotationMatrix = new Matrix4x4(
-                m00, m01, m02, 0f,
-                m10, m11, m12, 0f,
-                m20, m21, m22, 0f,
-                0f, 0f, 0f, 1f
-            );
-
-            float rotationDeterminant = rotationMatrix.GetDeterminant();
-            if (!Mathf.Approximately(rotationDeterminant, 1f))
-            {
-                return false;
-            }
-
-            // Comprobar que la parte de escala no contenga valores negativos
-            if (m00 < 0f || m11 < 0f || m22 < 0f)
+            // Verificar que la escala sea valida
+            float determinant = GetDeterminant();
+            if (determinant <= 0f)
             {
                 return false;
             }
