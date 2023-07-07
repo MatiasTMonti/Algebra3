@@ -80,6 +80,8 @@ namespace CustomMath
         #endregion
 
         #region Properties
+
+        //Devuelve el angulo de rotacion de un objeto representado por un vector3
         public Vec3 EulerAngles
         {
             get { return ToEulerAngles(this) * Mathf.Rad2Deg; } //Devuelve un vec3 que representa los angulos Euler de un quaternion y luego los paso de radianes a angulos
@@ -93,7 +95,7 @@ namespace CustomMath
 
         #region Functions
 
-        //Nos sirve para crear un nuevo quaterion a partir de los angulos de euler. 
+        //Nos sirve para crear un nuevo quaterion a partir de los angulos de euler.
         public static Quat Euler(float x, float y, float z)
         {
             //Convierte los angulos de grados a radianes (Necesario porque las funciones trig en C# esperan angulos en radianes)
@@ -116,7 +118,7 @@ namespace CustomMath
             float sinZ = Mathf.Sin(halfZ);
             float cosZ = Mathf.Cos(halfZ);
 
-            // Calcula los componentes del cuaternion utilizando la fórmula de Euler para la conversión. (La foto definitva)
+            //Calculo los componentes a partir de los angulos euler.
             float qx = sinX * cosY * cosZ - cosX * sinY * sinZ;
             float qy = cosX * sinY * cosZ + sinX * cosY * sinZ;
             float qz = cosX * cosY * sinZ - sinX * sinY * cosZ;
@@ -153,7 +155,7 @@ namespace CustomMath
 
         private static Quat ToQuaternion(Vec3 vec3)
         {
-            /*
+            //Creo directamente un quaternion a partir de un vector3
             // Calcula los componentes del cuaternion a partir de los valores del objeto Vec3
             float x = vec3.x;
             float y = vec3.y;
@@ -161,8 +163,10 @@ namespace CustomMath
             float w = 0f; // El componente w se establece en 0, ya que no se proporciona en el objeto Vec3
 
             return new Quat(x, y, z, w);
-            */
+            
 
+            //Es mas comun esta si se trabaja con angulos euler
+            /*
             float cz = Mathf.Cos(Mathf.Deg2Rad * vec3.z / 2);
             float sz = Mathf.Sin(Mathf.Deg2Rad * vec3.z / 2);
             float cy = Mathf.Cos(Mathf.Deg2Rad * vec3.y / 2);
@@ -178,6 +182,7 @@ namespace CustomMath
             quat.z = cx * cy * sz - sx * sy * cz;
 
             return quat;
+            */
         }
 
         //Esta funcion convierte un cuaterion en angulos euler
@@ -192,6 +197,7 @@ namespace CustomMath
             //Arcotangente y Arcoseno
             //La formulas son usadas para convertir los componentes de un cuaternion en angulos euler
             //Se basan en la representacion de cuaternion conocida como "Euler de navegacion"
+            //Usa atan/asin para tener el angulo a partir de los componentes del cuaternion
             float roll = Mathf.Atan2(2f * (qw * qx + qy * qz), 1f - 2f * (qx * qx + qy * qy)); //Angulo de rotacion alrededor del eje X
             float pitch = Mathf.Asin(2f * (qw * qy - qz * qx));                                //Angulo de rotacion alrededor del eje Y
             float yaw = Mathf.Atan2(2f * (qw * qz + qx * qy), 1f - 2f * (qy * qy + qz * qz));  //Angulo de rotacion alrededor del eje Z
@@ -201,7 +207,7 @@ namespace CustomMath
             return euler;
         }
 
-        //Se encarga de calcular y devolver el quaternion inverso
+        //Se encarga de calcular y devolver el quaternion inverso, se utiliza para deshacer una rotacion
         public static Quat Inverse(Quat rotation)
         {
             //Calculo el conjugado del quaternion
@@ -284,6 +290,7 @@ namespace CustomMath
             return SlerpUnclamped(a, b, t);
         }
 
+        //Interpolacion esferica, mas suave y continua
         public static Quat SlerpUnclamped(Quat a, Quat b, float t)
         {
             //Creo una instancia del quaternion
@@ -383,14 +390,14 @@ namespace CustomMath
             return new Quat(x, y, z, w);
         }
 
-        //Nos sirve para crear quaterniones que represetan la rotacion necesaria para orientar un objeto
+        //Se usa para crear un cuaternion que representa la rotacion para llevar un vector fromDirection a un vector toDirection
         public static Quat FromToRotation(Vec3 fromDirection, Vec3 toDirection)
         {
             //Normalizo los vectores
             Vec3 normalizedFrom = fromDirection.normalized;
             Vec3 normalizedTo = toDirection.normalized;
 
-            //Calculo el producto cruz, su resultado es un vectro perpendicular a ambos vectores de direccion
+            //Calculo el producto cruz, su resultado es un vector perpendicular a ambos vectores de direccion
             Vec3 cross = Vec3.Cross(normalizedFrom, normalizedTo);
 
             //Calculo el producto punto, esto nos da una medida de cuanto se superponen los vectores de direccion
@@ -486,6 +493,7 @@ namespace CustomMath
             return this.x == other.x && this.y == other.y && this.z == other.z && this.w == other.w;
         }
 
+        //Genera un valor de hash unico
         public override int GetHashCode()
         {
             return x.GetHashCode() ^ (y.GetHashCode() << 2) ^ (z.GetHashCode() >> 2) ^ (w.GetHashCode() >> 1);
